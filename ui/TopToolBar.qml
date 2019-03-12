@@ -14,6 +14,7 @@ ToolBar {
 
     signal showLeftSidebar();
     signal showSettings();
+    signal refresh();
     signal searchTerm(string searchTag);
 
     ToolButton{
@@ -34,7 +35,7 @@ ToolBar {
     Rectangle{
         id: objSearchScreen
         height: QbCoreOne.scale(50)*0.70
-        width: Math.min(350,(parent.width-100)*0.80)
+        width: Math.min(300,(parent.width-150)*0.80)
         color: "white"
         radius: 5
         y: (parent.height-height)/2.0
@@ -103,6 +104,19 @@ ToolBar {
         }
     }
 
+    ToolButton{
+        id: objRefreshMenu
+        height: QbCoreOne.scale(50)
+        text: QbMF3.icon("mf-refresh")
+        Material.foreground: objMetaTheme.textColor(objMetaTheme.primary)
+        font.family: QbMF3.family
+        anchors.right: objSettingsMenu.left
+        anchors.rightMargin: 5
+        onClicked: {
+            objTopToolBar.refresh()
+        }
+        anchors.bottom: parent.bottom
+    }
 
     ToolButton{
         id: objSettingsMenu

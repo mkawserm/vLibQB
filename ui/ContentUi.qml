@@ -57,8 +57,12 @@ Pane {
         }
 
         onShowSettings: {
-            console.log("Showing Settings");
+            console.log("Showing Settings...");
             objRootContentUi.showSettings = true;
+        }
+
+        onRefresh: {
+            console.log("Refreshing...");
         }
 
         onSearchTerm: {
