@@ -1,0 +1,23 @@
+{
+    "name"			       : "vLibQB",
+	"version"		       : "1.0.0",
+    "build"                : 1,
+    "namespace"		       : "qb.apps.vLibQB",
+	
+	"supportedOs"          : ["osx","windows","linux","ios","android"],
+    "tags"                 : "Vector, Graphics, SVG",
+
+	"category"             : "Applications",
+    "subCategory"          : "Tools",
+    "genre"   		       : "Tools",
+	
+    "minQbVersion"         : "1.0.0",
+    "minQbBuildNumber"     : 2150,
+    "appVariant"           : "APP",
+    "packageVariant"       : "QAP",
+
+    "description"          : "Manage vector graphics",
+
+    "author"		       : [{"name":"Kawser","link":"https://github.com/mkawserm"}],
+    "projectLink"	       : [{"name":"GitHub","link":"https://github.com/mkawserm/vLibQB"}]
+}
