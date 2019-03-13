@@ -293,15 +293,10 @@ Dialog {
         {
             objAddDialog.errorText = "Tags can not be empty";
         }
-//        else if(objAddDialog.lastModified === "")
-//        {
-//            objAddDialog.errorText = "Last modified can not be empty";
-//        }
         else if(objAddDialog.filePath === ""){
             objAddDialog.errorText = "Must add a file path";
         }
         else{
-
             if(objAddDialog.isUpdate)
             {
 
@@ -347,6 +342,7 @@ Dialog {
                 d["path"] = fileName;
                 d["status"] = 0;
                 d["hasData"] = 0;
+                d["hash"] = "";
 
                 if(objORMQueryModel.prepend(d))
                 {
