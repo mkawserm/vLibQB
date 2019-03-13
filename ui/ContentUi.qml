@@ -152,6 +152,10 @@ Pane {
                 objORMQueryModel.search("tags",tag,"-pk");
             }
         }
+        onClosed:
+        {
+            objGridView.forceActiveFocus();
+        }
     }
 
     TopToolBar{
@@ -263,7 +267,6 @@ Pane {
                 }
             }
         }
-
     }
 
 
