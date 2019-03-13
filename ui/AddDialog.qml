@@ -310,11 +310,14 @@ Dialog {
             objAddDialog.errorText = "Must add a file path";
         }
         else{
+            var TagList = [];
+
             if(objAddDialog.isUpdate)
             {
                 objFilePath.readOnly = true;
                 objBrowseButton.enabled = false;
-                if(index !=-1){
+                if(index !=-1)
+                {
                     var dtags = [];
                     if(QbUtil.stringContains(objAddDialog.tags,","))
                     {
@@ -341,6 +344,39 @@ Dialog {
 
                     if(objORMQueryModel.update(objAddDialog.index,d))
                     {
+                        //Tag update
+                        var TagListMap = {};
+                        objVLibQBCore.orm.vLibQBKeyValuePairQuery.one("pk","TagList");
+                        if(objVLibQBCore.orm.vLibQBKeyValuePairQuery.size() === 0)
+                        {
+                            TagListMap["pk"] = "TagList";
+                            TagListMap["value"] = JSON.stringify(TagList);
+                            objVLibQBCore.orm.vLibQBKeyValuePairQuery.add(TagListMap)
+                            objVLibQBCore.orm.vLibQBKeyValuePairQuery.reset();
+                        }
+                        else
+                        {
+                            try
+                            {
+                                var oldTagList = JSON.parse(objVLibQBCore.orm.vLibQBKeyValuePairQuery.at(0).value);
+                                for(var i=0;i<oldTagList.length;++i)
+                                {
+                                    var ntag = oldTagList[i];
+                                    if(TagList.indexOf(ntag) === -1)
+                                    {
+                                        TagList.push(ntag);
+                                    }
+                                }
+                                TagListMap["pk"] = "TagList";
+                                TagListMap["value"] = JSON.stringify(TagList);
+                                objVLibQBCore.orm.vLibQBKeyValuePairQuery.update(TagListMap)
+                                objVLibQBCore.orm.vLibQBKeyValuePairQuery.reset();
+                            }
+                            catch(e)
+                            {
+                            }
+                        }
+
                         objAddDialog.clearFields();
                         objAddDialog.close();
                     }
@@ -387,6 +423,15 @@ Dialog {
                     dtags = QbUtil.stringTokenList(objAddDialog.tags," ");
                 }
 
+                for(var i=0;i<dtags.length;++i)
+                {
+                    var ntag = QbUtil.stringToLower(QbUtil.stringTrimmed(dtags[i]));
+                    if(TagList.indexOf(ntag) === -1)
+                    {
+                        TagList.push(ntag);
+                    }
+                }
+
                 var d = {};
                 d["name"] = objAddDialog.name;
                 d["author"] = objAddDialog.author;
@@ -400,6 +445,41 @@ Dialog {
 
                 if(objORMQueryModel.prepend(d))
                 {
+                    //TagUpdate
+                    var TagListMap = {};
+                    objVLibQBCore.orm.vLibQBKeyValuePairQuery.one("pk","TagList");
+                    if(objVLibQBCore.orm.vLibQBKeyValuePairQuery.size() === 0)
+                    {
+                        TagListMap["pk"] = "TagList";
+                        TagListMap["value"] = JSON.stringify(TagList);
+
+                        objVLibQBCore.orm.vLibQBKeyValuePairQuery.add(TagListMap)
+                        objVLibQBCore.orm.vLibQBKeyValuePairQuery.reset();
+                    }
+                    else
+                    {
+                        try
+                        {
+                            var oldTagList = JSON.parse(objVLibQBCore.orm.vLibQBKeyValuePairQuery.at(0).value);
+                            for(var i=0;i<oldTagList.length;++i)
+                            {
+                                var ntag = oldTagList[i];
+                                if(TagList.indexOf(ntag) === -1)
+                                {
+                                    TagList.push(ntag);
+                                }
+                            }
+                            TagListMap["pk"] = "TagList";
+                            TagListMap["value"] = JSON.stringify(TagList);
+
+                            objVLibQBCore.orm.vLibQBKeyValuePairQuery.update(TagListMap)
+                            objVLibQBCore.orm.vLibQBKeyValuePairQuery.reset();
+                        }
+                        catch(e)
+                        {
+                        }
+                    }
+
                     objAddDialog.clearFields();
                     objAddDialog.close();
                 }

@@ -52,9 +52,11 @@ Pane {
 
 
     function setupDb(){
-        if(objRootContentUi.dataDir !== ""){
+        if(objRootContentUi.dataDir !== "")
+        {
             objDir.setPath(objRootContentUi.dataDir);
-            if(!objDir.exists()){
+            if(!objDir.exists())
+            {
                 objDir.mkpath(objRootContentUi.dataDir);
             }
 
@@ -71,8 +73,30 @@ Pane {
         }
     }
 
+    function updateTagList()
+    {
+        objLeftSidebar.dataModel.clear();
+        objLeftSidebar.dataModel.append({"name":"All"});
+
+        objVLibQBCore.orm.vLibQBKeyValuePairQuery.one("pk","TagList");
+        if(objVLibQBCore.orm.vLibQBKeyValuePairQuery.size() === 0)
+        {
+
+        }
+        else
+        {
+            var TagList = JSON.parse(objVLibQBCore.orm.vLibQBKeyValuePairQuery.at(0).value);
+            for(var i=0;i<TagList.length;++i)
+            {
+                objLeftSidebar.dataModel.append({"name": QbUtil.stringToCapitalize(TagList[i])});
+            }
+        }
+
+    }
+
     Component.onCompleted: {
         setupDb();
+        updateTagList();
     }
 
     /*Core components*/
@@ -204,6 +228,7 @@ Pane {
         y: (parent.height - height)/2.0
         onClosed: {
             objRootContentUi.showSettings = false;
+            updateTagList();
         }
     }
 

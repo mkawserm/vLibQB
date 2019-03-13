@@ -5,7 +5,7 @@ import QtQuick 2.0
 QbORMModel{
     tableName: "vLibQBKeyValuePair";
     pk: QbORMField.varchar("",512/*maxLength*/,true/*isUnique*/,true);
-    property var value:  QbORMField.variant("")
+    property var value:  QbORMField.string()
 
     property var updated: QbORMField.timestamp(0,true,true);
     property var created: QbORMField.timestamp(0,true,false);

@@ -10,6 +10,8 @@ Drawer {
 
     signal selectedTag(string tag);
 
+    property alias dataModel: objDataModel
+
     ListModel{
         id: objDataModel
         ListElement{
