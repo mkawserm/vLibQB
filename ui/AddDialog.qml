@@ -290,6 +290,11 @@ Dialog {
         objBrowseButton.enabled = true;
     }
 
+    function showUpdate(index,dataMap){
+
+    }
+
+
     function addOrUpdate(){
         if(objAddDialog.name === "")
         {
