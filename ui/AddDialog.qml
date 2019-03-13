@@ -267,12 +267,13 @@ Dialog {
     /*Add or Update Logic*/
     function clearFields(){
         objAddDialog.name = "";
-        objAddDialog.errorText = "";
         objAddDialog.group = "";
+        objAddDialog.author = "";
         objAddDialog.tags = "";
         objAddDialog.filePath = "";
         objAddDialog.lastModifiedTimeStamp = "";
         objAddDialog.lastModified = "";
+        objAddDialog.errorText = "";
     }
 
 

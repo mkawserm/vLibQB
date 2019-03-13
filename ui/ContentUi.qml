@@ -151,10 +151,22 @@ Pane {
         anchors.bottom: objBottomToolBar.top
         clip: true
 
+        Text{
+            anchors.fill: parent
+            anchors.centerIn: parent
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+            text: "Nothing added yet"
+            font.pixelSize: 20
+            color: "grey"
+            visible: objORMQueryModel.count === 0
+        }
+
         GridView{
             id: objGridView
             anchors.fill: parent
             model: objORMQueryModel
+            visible: objORMQueryModel.count !== 0
             cellWidth: objRootContentUi.gridWidth + objRootContentUi.gridSpacing
             cellHeight: objRootContentUi.gridHeight + objRootContentUi.gridSpacing
             delegate: Rectangle{
