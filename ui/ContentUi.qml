@@ -115,6 +115,7 @@ Pane {
     Component.onCompleted: {
         setupDb();
         updateTagListFromModel();
+        objGridView.forceActiveFocus();
     }
 
     /*Core components*/
@@ -199,7 +200,7 @@ Pane {
             anchors.centerIn: parent
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
-            text: "Nothing added yet"
+            text: "Nothing found"
             font.pixelSize: 20
             color: "grey"
             visible: objORMQueryModel.count === 0
@@ -212,10 +213,28 @@ Pane {
             visible: objORMQueryModel.count !== 0
             cellWidth: objRootContentUi.gridWidth + objRootContentUi.gridSpacing
             cellHeight: objRootContentUi.gridHeight + objRootContentUi.gridSpacing
+            ScrollIndicator.vertical: ScrollIndicator { }
+            z: 1
+            Keys.onReturnPressed: {
+                console.log("Return Pressed")
+                enterKeyAction(event);
+            }
+            Keys.onEnterPressed: {
+                console.log("Enter Pressed")
+                enterKeyAction(event);
+            }
+
+            function enterKeyAction(event){
+                console.log("Event:")
+                console.log(event)
+            }
+
             delegate: Rectangle{
                 width: objGridView.cellWidth
                 height: objGridView.cellHeight
                 color: "transparent"
+                border.color: objMetaTheme.primary
+                border.width: objGridView.currentIndex === index?1:0
                 Image{
                     width: objRootContentUi.gridWidth
                     height: objRootContentUi.gridHeight
@@ -227,6 +246,20 @@ Pane {
                     sourceSize.width: width*2
                     sourceSize.height: height*2
                     source: Qt.platform.os==="windows"?"file:///"+objRootContentUi.dataDir+"/"+path:"file://"+objRootContentUi.dataDir+"/"+path
+                }
+
+                MouseArea{
+                    anchors.fill: parent
+                    z: 3
+                    preventStealing: true
+                    onPressed: {
+                        objGridView.forceActiveFocus();
+                        objGridView.currentIndex = index;
+                    }
+                    onClicked: {
+                        objGridView.forceActiveFocus();
+                        objGridView.currentIndex = index;
+                    }
                 }
             }
         }
