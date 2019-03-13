@@ -1,4 +1,5 @@
 import Qb 1.0
+import Qb.ORM 1.0
 import Qb.Core 1.0
 import QtQuick 2.12
 import QtQuick.Controls 2.5
@@ -16,7 +17,15 @@ Dialog {
     property alias author: objAuthorField.text
     property alias group: objGroupField.text
     property alias tags: objTagsField.text
+    property var lastModifiedTimeStamp;
     property alias lastModified: objLastModified.text
+
+    onFilePathChanged: {
+        if(filePath !== ""){
+            lastModifiedTimeStamp = QbORMUtil.getLastModifiedTimestampVariant(filePath);
+            lastModified =  QbORMUtil.getDateTimeStringFromUnixTimestamp(lastModifiedTimeStamp);
+        }
+    }
 
     property bool isUpdate: false
 
@@ -25,6 +34,10 @@ Dialog {
     leftPadding: 0
     rightPadding: 0
 
+    onClosed: {
+        clearFields();
+    }
+
 
     Loader{
         id: objFileChooserLoader
@@ -32,6 +45,14 @@ Dialog {
 
     QbPaths{
         id: objPaths
+    }
+
+    QbFileInfo{
+        id: objFileInfoHandler
+    }
+
+    QbFile{
+        id: objFileHandler
     }
 
     header: Rectangle{
@@ -212,6 +233,7 @@ Dialog {
             }
 
             DropArea{
+                visible: objAddDialog.visible
                 anchors.fill: parent
                 onDropped: {
                     if(drop["hasUrls"]){
@@ -243,7 +265,101 @@ Dialog {
 
 
     /*Add or Update Logic*/
+    function clearFields(){
+        objAddDialog.name = "";
+        objAddDialog.errorText = "";
+        objAddDialog.group = "";
+        objAddDialog.tags = "";
+        objAddDialog.filePath = "";
+        objAddDialog.lastModifiedTimeStamp = "";
+        objAddDialog.lastModified = "";
+    }
+
+
     function addOrUpdate(){
+        if(objAddDialog.name === "")
+        {
+            objAddDialog.errorText = "Name can not be empty";
+        }
+        else if(objAddDialog.author === "")
+        {
+            objAddDialog.errorText = "Author can not be empty";
+        }
+        else if(objAddDialog.group === "")
+        {
+            objAddDialog.errorText = "Group can not be empty";
+        }
+        else if(objAddDialog.tags === "")
+        {
+            objAddDialog.errorText = "Tags can not be empty";
+        }
+//        else if(objAddDialog.lastModified === "")
+//        {
+//            objAddDialog.errorText = "Last modified can not be empty";
+//        }
+        else if(objAddDialog.filePath === ""){
+            objAddDialog.errorText = "Must add a file path";
+        }
+        else{
+
+            if(objAddDialog.isUpdate)
+            {
+
+            }
+            else
+            {
+                objFileInfoHandler.setFile(objAddDialog.filePath);
+                var fileName = objFileInfoHandler.fileName();
+                var cFilePath = objRootContentUi.dataDir+"/"+fileName;
+
+                objFileHandler.setFileName(cFilePath);
+                if(objFileHandler.exists()){
+                    objAddDialog.errorText = "File already exists";
+                    return;
+                }
+                else{
+                    if(!objFileHandler.copy(objAddDialog.filePath,cFilePath))
+                    {
+                        objAddDialog.errorText = "Failed to copy the file to the data dir";
+                        return;
+                    }
+                }
+
+                var dtags = [];
+                if(QbUtil.stringContains(objAddDialog.tags,","))
+                {
+                    dtags = QbUtil.stringTokenList(objAddDialog.tags,",");
+                }
+                else if(QbUtil.stringContains(objAddDialog.tags,";"))
+                {
+                    dtags = QbUtil.stringTokenList(objAddDialog.tags,";");
+                }
+                else{
+                    dtags = QbUtil.stringTokenList(objAddDialog.tags," ");
+                }
+
+                var d = {};
+                d["name"] = objAddDialog.name;
+                d["author"] = objAddDialog.author;
+                d["group"] = objAddDialog.group;
+                d["tags"] = dtags;
+                d["lastModified"] = objAddDialog.lastModifiedTimeStamp;
+                d["path"] = fileName;
+                d["status"] = 0;
+                d["hasData"] = 0;
+
+                if(objORMQueryModel.prepend(d))
+                {
+                    objAddDialog.clearFields();
+                    objAddDialog.close();
+                }
+                else
+                {
+                    objAddDialog.errorText = "Failed to add";
+                }
+
+            }
+        }
 
     }
 }

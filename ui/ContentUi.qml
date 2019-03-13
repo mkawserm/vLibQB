@@ -2,6 +2,11 @@ import QtQuick 2.12
 import QtQuick.Controls 2.5
 import QtQuick.Controls.Material 2.12
 
+import Qb.Core 1.0
+import Qb.ORM 1.0
+
+import "../core" as Core
+
 Pane {
     id: objRootContentUi
 
@@ -14,19 +19,24 @@ Pane {
     property alias gridHeight: objSettingsDialog.gridHeight
     property alias gridSpacing: objSettingsDialog.gridSpacing
     property alias dataDir: objSettingsDialog.dataDir
+
     property bool showSettings: false;
 
     onGridWidthChanged: {
         objMainAppUi.gridWidth = objRootContentUi.gridWidth;
     }
+
     onGridHeightChanged: {
         objMainAppUi.gridHeight = objRootContentUi.gridHeight;
     }
+
     onGridSpacingChanged: {
         objMainAppUi.gridSpacing = objRootContentUi.gridSpacing;
     }
+
     onDataDirChanged: {
         objMainAppUi.dataDir = objRootContentUi.dataDir;
+        setupDb();
     }
 
     onShowSettingsChanged: {
@@ -40,10 +50,64 @@ Pane {
         }
     }
 
+
+    function setupDb(){
+        if(objRootContentUi.dataDir !== ""){
+            objDir.setPath(objRootContentUi.dataDir);
+            if(!objDir.exists()){
+                objDir.mkpath(objRootContentUi.dataDir);
+            }
+
+            objVLibQBCore.dbPath = objRootContentUi.dataDir+"/vLibQB.db";
+            if(objVLibQBCore.orm.createTables())
+            {
+
+            }
+            else
+            {
+                console.log("Failed to create tables")
+            }
+            objORMQueryModel.search("status",0,"-pk");
+        }
+    }
+
+    Component.onCompleted: {
+        setupDb();
+    }
+
+    /*Core components*/
+    Core.VLibQBCore{
+        id: objVLibQBCore
+    }
+
+    QbORMQueryModel{
+        id: objORMQueryModel
+        query: objVLibQBCore.vLibQBModelQuery
+        limit: 100
+    }
+
+
+    QbDir{
+        id: objDir
+    }
+
+    QbFile{
+        id: objFileHandler
+    }
+
+
     LeftSidebar{
         id: objLeftSidebar
         onSelectedTag:{
             console.log(tag);
+            if(tag === "All")
+            {
+                objORMQueryModel.search("status",0,"-pk");
+            }
+            else
+            {
+                objORMQueryModel.search("tags",tag,"-pk");
+            }
         }
     }
 
@@ -68,6 +132,14 @@ Pane {
         onSearchTerm: {
             console.log("New search term found:",searchTag);
             console.log(searchTag);
+            if(searchTag === "")
+            {
+                objORMQueryModel.search("status",0,"-pk");
+            }
+            else
+            {
+                objORMQueryModel.search(["name","path","author","tags","group"],searchTag,"-pk");
+            }
         }
     }
 
@@ -77,11 +149,33 @@ Pane {
         anchors.right: parent.right
         anchors.top: objTopToolBar.bottom
         anchors.bottom: objBottomToolBar.top
+        clip: true
 
         GridView{
+            id: objGridView
             anchors.fill: parent
-
+            model: objORMQueryModel
+            cellWidth: objRootContentUi.gridWidth + objRootContentUi.gridSpacing
+            cellHeight: objRootContentUi.gridHeight + objRootContentUi.gridSpacing
+            delegate: Rectangle{
+                width: objGridView.cellWidth
+                height: objGridView.cellHeight
+                color: "transparent"
+                Image{
+                    width: objRootContentUi.gridWidth
+                    height: objRootContentUi.gridHeight
+                    fillMode: Image.PreserveAspectFit
+                    mipmap: true
+                    smooth: true
+                    asynchronous: true
+                    anchors.centerIn: parent
+                    sourceSize.width: width*2
+                    sourceSize.height: height*2
+                    source: Qt.platform.os==="windows"?"file:///"+objRootContentUi.dataDir+"/"+path:"file://"+objRootContentUi.dataDir+"/"+path
+                }
+            }
         }
+
     }
 
 
@@ -110,11 +204,34 @@ Pane {
     }
 
     DropArea{
+        visible: !objSettingsDialog.visible && !objAddDialog.visible
         anchors.fill: parent
         onDropped: {
-            console.log(JSON.stringify(drop));
-            drop.accepted = true;
-            objAddDialog.open();
+            if(drop["hasUrls"])
+            {
+                var url =  QbUtil.removeScheme(drop["urls"][0]);
+                if(QbUtil.isFile(url))
+                {
+                    if(QbUtil.stringIEndsWith(url,".svg"))
+                    {
+                        drop.accepted = true;
+                        objAddDialog.filePath = url;
+                        objAddDialog.open();
+                    }
+                    else
+                    {
+                        drop.accepted = false;
+                    }
+                }
+                else
+                {
+                    drop.accepted = false;
+                }
+            }
+            else
+            {
+                drop.accepted = false;
+            }
         }
     }
 }

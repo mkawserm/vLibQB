@@ -99,13 +99,14 @@ ToolBar {
                     objPlaceHolderText.opacity = 0;
                 }
 
-                objSearchScreen.searchTerm(text);
+                objTopToolBar.searchTerm(objSearchField.text);
             }
         }
     }
 
     ToolButton{
         id: objRefreshMenu
+        visible: false
         height: QbCoreOne.scale(50)
         text: QbMF3.icon("mf-refresh")
         Material.foreground: objMetaTheme.textColor(objMetaTheme.primary)

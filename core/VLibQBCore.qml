@@ -4,6 +4,7 @@ import QtQuick 2.0
 import "../models"
 
 Item {
+    id: objRootCore
     property alias orm: objORM
     property alias dbPath: objORM.dbName
 
@@ -11,12 +12,14 @@ Item {
     property alias vLibQBModelDataQuery: objORM.vLibQBModelDataQuery
     property alias vLibQBKeyValuePairQuery: objORM.vLibQBKeyValuePairQuery
 
+    signal error(string errorText)
+
 
     QbORM{
         id: objORM
-
+        autoSetup: false
         onError: {
-            console.log(errorText)
+            objRootCore.error(errorText);
         }
 
         Component.onCompleted: {

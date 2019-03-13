@@ -27,8 +27,6 @@ Popup {
         id: objPaths
     }
 
-
-
     Rectangle{
         id: objSettingsDialogTopToolbar
         width: parent.width
@@ -41,7 +39,7 @@ Popup {
             text: "Settings"
             x: (parent.width - width)/2.0
             anchors.bottom: parent.bottom
-            font.pixelSize: 20
+            font.pixelSize: 18
             font.bold: true
             verticalAlignment: Label.AlignVCenter
             horizontalAlignment: Label.AlignHCenter
@@ -223,6 +221,7 @@ Popup {
             }
 
             DropArea{
+                visible: objSettingsDialog.visible
                 anchors.fill: parent
                 onDropped: {
                     if(drop["hasUrls"]){
