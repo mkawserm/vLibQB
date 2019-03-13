@@ -73,11 +73,22 @@ Pane {
         }
     }
 
-    function updateTagList()
+    function updateTagList(TagList)
+    {
+        objLeftSidebar.dataModel.clear();
+        objLeftSidebar.dataModel.append({"name":"All"});
+        for(var i=0;i<TagList.length;++i)
+        {
+            objLeftSidebar.dataModel.append({"name": QbUtil.stringToCapitalize(TagList[i])});
+        }
+    }
+
+    function updateTagListFromModel()
     {
         objLeftSidebar.dataModel.clear();
         objLeftSidebar.dataModel.append({"name":"All"});
 
+        objVLibQBCore.orm.vLibQBKeyValuePairQuery.reset();
         objVLibQBCore.orm.vLibQBKeyValuePairQuery.one("pk","TagList");
         if(objVLibQBCore.orm.vLibQBKeyValuePairQuery.size() === 0)
         {
@@ -85,10 +96,17 @@ Pane {
         }
         else
         {
-            var TagList = JSON.parse(objVLibQBCore.orm.vLibQBKeyValuePairQuery.at(0).value);
-            for(var i=0;i<TagList.length;++i)
+            try
             {
-                objLeftSidebar.dataModel.append({"name": QbUtil.stringToCapitalize(TagList[i])});
+                var TagList = JSON.parse(objVLibQBCore.orm.vLibQBKeyValuePairQuery.at(0).value);
+                for(var i=0;i<TagList.length;++i)
+                {
+                    objLeftSidebar.dataModel.append({"name": QbUtil.stringToCapitalize(TagList[i])});
+                }
+            }
+            catch(e)
+            {
+
             }
         }
 
@@ -96,7 +114,7 @@ Pane {
 
     Component.onCompleted: {
         setupDb();
-        updateTagList();
+        updateTagListFromModel();
     }
 
     /*Core components*/
@@ -151,6 +169,7 @@ Pane {
 
         onRefresh: {
             console.log("Refreshing...");
+            updateTagListFromModel();
         }
 
         onSearchTerm: {
@@ -228,7 +247,6 @@ Pane {
         y: (parent.height - height)/2.0
         onClosed: {
             objRootContentUi.showSettings = false;
-            updateTagList();
         }
     }
 
@@ -238,6 +256,9 @@ Pane {
         height: parent.height*0.90
         x: (parent.width - width)/2.0
         y: (parent.height - height)/2.0
+        onUpdateTagList: {
+            objRootContentUi.updateTagList(TagList);
+        }
     }
 
     DropArea{

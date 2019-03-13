@@ -23,6 +23,8 @@ Dialog {
     property var lastModifiedTimeStamp;
     property alias lastModified: objLastModified.text
 
+    signal updateTagList(var TagList);
+
     onFilePathChanged: {
         if(filePath !== ""){
             if(!isUpdate){
@@ -288,7 +290,6 @@ Dialog {
         objBrowseButton.enabled = true;
     }
 
-
     function addOrUpdate(){
         if(objAddDialog.name === "")
         {
@@ -311,6 +312,8 @@ Dialog {
         }
         else{
             var TagList = [];
+            var dtags = [];
+            var d = {};
 
             if(objAddDialog.isUpdate)
             {
@@ -318,7 +321,8 @@ Dialog {
                 objBrowseButton.enabled = false;
                 if(index !=-1)
                 {
-                    var dtags = [];
+
+                    dtags = [];
                     if(QbUtil.stringContains(objAddDialog.tags,","))
                     {
                         dtags = QbUtil.stringTokenList(objAddDialog.tags,",");
@@ -331,7 +335,16 @@ Dialog {
                         dtags = QbUtil.stringTokenList(objAddDialog.tags," ");
                     }
 
-                    var d = {};
+                    for(var i=0;i<dtags.length;++i)
+                    {
+                        var ntag = QbUtil.stringToLower(QbUtil.stringTrimmed(dtags[i]));
+                        if(TagList.indexOf(ntag) === -1)
+                        {
+                            TagList.push(ntag);
+                        }
+                    }
+
+                    d = {};
                     d["name"] = objAddDialog.name;
                     d["author"] = objAddDialog.author;
                     d["group"] = objAddDialog.group;
@@ -377,6 +390,7 @@ Dialog {
                             }
                         }
 
+                        objAddDialog.updateTagList(TagList);
                         objAddDialog.clearFields();
                         objAddDialog.close();
                     }
@@ -410,7 +424,7 @@ Dialog {
                     }
                 }
 
-                var dtags = [];
+                dtags = [];
                 if(QbUtil.stringContains(objAddDialog.tags,","))
                 {
                     dtags = QbUtil.stringTokenList(objAddDialog.tags,",");
@@ -432,7 +446,7 @@ Dialog {
                     }
                 }
 
-                var d = {};
+                d = {};
                 d["name"] = objAddDialog.name;
                 d["author"] = objAddDialog.author;
                 d["group"] = objAddDialog.group;
@@ -480,6 +494,7 @@ Dialog {
                         }
                     }
 
+                    objAddDialog.updateTagList(TagList);
                     objAddDialog.clearFields();
                     objAddDialog.close();
                 }
