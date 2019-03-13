@@ -3,12 +3,22 @@ import Qb.Core 1.0
 import QtQuick 2.12
 import QtQuick.Controls 2.5
 import QtQuick.Controls.Material 2.12
-import Qt.labs.platform 1.1
 
-Popup {
+Dialog {
     id: objAddDialog
     modal: true
     closePolicy: Popup.NoAutoClose
+
+    property alias errorText: objMessageBox.text
+
+    property alias filePath: objFilePath.text
+    property alias name: objNameField.text
+    property alias author: objAuthorField.text
+    property alias group: objGroupField.text
+    property alias tags: objTagsField.text
+    property alias lastModified: objLastModified.text
+
+    property bool isUpdate: false
 
     topPadding: 0
     bottomPadding: 0
@@ -24,7 +34,7 @@ Popup {
         id: objPaths
     }
 
-    Rectangle{
+    header: Rectangle{
         id: objAddDialogTopBar
         width: parent.width
         height: QbCoreOne.scale(50)
@@ -33,7 +43,7 @@ Popup {
 
         Label{
             height: QbCoreOne.scale(50)
-            text: "Add"
+            text: objAddDialog.isUpdate?"Update" :"Add"
             x: (parent.width - width)/2.0
             anchors.bottom: parent.bottom
             font.pixelSize: 18
@@ -57,14 +67,54 @@ Popup {
         }
     }
 
-    Column{
+    footer: Rectangle{
+        id: objFooter
         width: parent.width
-        height: parent.height - objAddDialogTopBar.height
-        anchors.top: objAddDialogTopBar.bottom
-        anchors.topMargin: 10
+        height: QbCoreOne.scale(50)
+        color: "black"
+        Label{
+            id: objMessageBox
+            anchors.left: parent.left
+            anchors.leftMargin: 5
+            anchors.right: objSaveButton.left
+            anchors.rightMargin: 5
+            font.pixelSize: 13
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            text: ""
+            verticalAlignment: Label.AlignVCenter
+            horizontalAlignment: Label.AlignHCenter
+        }
+
+        Button{
+            id: objSaveButton
+            height: QbCoreOne.scale(50)
+            text: objAddDialog.isUpdate?"UPDATE":"SAVE"
+            Material.background: objMetaTheme.primary
+            Material.foreground: objMetaTheme.textColor(objMetaTheme.primary)
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            anchors.rightMargin: 5
+            onClicked: {
+                /*Save here*/
+                objAddDialog.addOrUpdate();
+            }
+        }
+    }
+
+
+    Column{
+        anchors.fill: parent
+        clip: true
 
         Label{
             text: "Name"
+            anchors.left: parent.left
+            anchors.leftMargin: 5
+        }
+        TextField{
+            id: objNameField
+            width: parent.width - 10
             anchors.left: parent.left
             anchors.leftMargin: 5
         }
@@ -74,9 +124,21 @@ Popup {
             anchors.left: parent.left
             anchors.leftMargin: 5
         }
+        TextField{
+            id: objAuthorField
+            width: parent.width - 10
+            anchors.left: parent.left
+            anchors.leftMargin: 5
+        }
 
         Label{
             text: "Group"
+            anchors.left: parent.left
+            anchors.leftMargin: 5
+        }
+        TextField{
+            id: objGroupField
+            width: parent.width - 10
             anchors.left: parent.left
             anchors.leftMargin: 5
         }
@@ -85,6 +147,27 @@ Popup {
             text: "Tags"
             anchors.left: parent.left
             anchors.leftMargin: 5
+        }
+        TextField{
+            id: objTagsField
+            width: parent.width - 10
+            anchors.left: parent.left
+            anchors.leftMargin: 5
+        }
+
+        Row{
+            width: parent.width
+            height: 50
+            spacing: 5
+            anchors.left: parent.left
+            anchors.leftMargin: 5
+            Label{
+                text: "Last modified: "
+            }
+            Label{
+                id: objLastModified
+                height: 50
+            }
         }
 
         Label{
@@ -114,12 +197,6 @@ Popup {
                 onClicked: {
                 }
             }
-        }
-
-        Label{
-            text: "Last modified"
-            anchors.left: parent.left
-            anchors.leftMargin: 5
         }
 
 
@@ -162,8 +239,11 @@ Popup {
                 }
             }
         }
-
-
     }
 
+
+    /*Add or Update Logic*/
+    function addOrUpdate(){
+
+    }
 }

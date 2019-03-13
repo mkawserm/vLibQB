@@ -103,8 +103,8 @@ Pane {
 
     AddDialog{
         id: objAddDialog
-        width: Math.min(500,parent.width*0.90)
-        height: Math.min(500,parent.height*0.90)
+        width: parent.width*0.90
+        height: parent.height*0.90
         x: (parent.width - width)/2.0
         y: (parent.height - height)/2.0
     }
