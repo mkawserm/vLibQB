@@ -34,8 +34,10 @@ QbORMModel{
                            );
 
     property var lastModified: QbORMField.timestamp(0,false,false)
-    property var hasData: QbORMField.boolean(false,"hasData",false,false,true) /* 0 means No, 1 means Yes*/
+    property var hasData: QbORMField.boolean(false,"Hash Data",false,false,true) /* 0 means No, 1 means Yes*/
     property var status: QbORMField.integerNumber(0); /* 0 means active, 1 means trashed, 2 means archived */
+
+    property var hash: QbORMField.binary()
 
     property var updated: QbORMField.timestamp(0,true,true);
     property var created: QbORMField.timestamp(0,true,false);
