@@ -222,6 +222,7 @@ Dialog {
             Button{
                 id: objBrowseButton
                 text: "BROWSE"
+                visible: false
                 Material.background: objMetaTheme.primary
                 onClicked: {
                 }
@@ -287,7 +288,7 @@ Dialog {
 
         /*flags*/
         objFilePath.readOnly = false;
-        objBrowseButton.enabled = true;
+        //objBrowseButton.enabled = true;
     }
 
     function showUpdate(index,dataMap){
