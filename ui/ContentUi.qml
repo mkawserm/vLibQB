@@ -101,4 +101,20 @@ Pane {
         }
     }
 
+    AddDialog{
+        id: objAddDialog
+        width: Math.min(500,parent.width*0.90)
+        height: Math.min(500,parent.height*0.90)
+        x: (parent.width - width)/2.0
+        y: (parent.height - height)/2.0
+    }
+
+    DropArea{
+        anchors.fill: parent
+        onDropped: {
+            console.log(JSON.stringify(drop));
+            drop.accepted = true;
+            objAddDialog.open();
+        }
+    }
 }

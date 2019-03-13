@@ -15,11 +15,6 @@ QbORMModel{
                            512 /*maxLength*/
                            );
 
-    property var path: QbORMField.charField(
-                           "", /*default value*/
-                           512 /*maxLength*/
-                           );
-
     property var group: QbORMField.charField(
                            "", /*default value*/
                            512 /*maxLength*/
@@ -32,6 +27,13 @@ QbORMModel{
                            false,/*isEditable*/
                            true/*isSelectable*/
                            );
+
+    property var path: QbORMField.charField(
+                           "", /*default value*/
+                           512 /*maxLength*/
+                           );
+
+    property var lastModified: QbORMField.timestamp(0,false,false)
     property var hasData: QbORMField.boolean(false,"hasData",false,false,true) /* 0 means No, 1 means Yes*/
     property var status: QbORMField.integerNumber(0); /* 0 means active, 1 means trashed, 2 means archived */
 
