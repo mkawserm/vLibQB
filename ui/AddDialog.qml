@@ -12,22 +12,28 @@ Dialog {
 
     property alias errorText: objMessageBox.text
 
-    property alias filePath: objFilePath.text
+    property int index:-1;
     property alias name: objNameField.text
     property alias author: objAuthorField.text
     property alias group: objGroupField.text
     property alias tags: objTagsField.text
+    property alias filePath: objFilePath.text
+
+    property bool isUpdate: false
     property var lastModifiedTimeStamp;
     property alias lastModified: objLastModified.text
 
     onFilePathChanged: {
         if(filePath !== ""){
-            lastModifiedTimeStamp = QbORMUtil.getLastModifiedTimestampVariant(filePath);
-            lastModified =  QbORMUtil.getDateTimeStringFromUnixTimestamp(lastModifiedTimeStamp);
+            if(!isUpdate){
+                lastModifiedTimeStamp = QbORMUtil.getLastModifiedTimestampVariant(filePath);
+                lastModified =  QbORMUtil.getDateTimeStringFromUnixTimestamp(lastModifiedTimeStamp);
+            }
+            else{
+                lastModified =  QbORMUtil.getDateTimeStringFromUnixTimestamp(lastModifiedTimeStamp);
+            }
         }
     }
-
-    property bool isUpdate: false
 
     topPadding: 0
     bottomPadding: 0
@@ -274,6 +280,12 @@ Dialog {
         objAddDialog.lastModifiedTimeStamp = "";
         objAddDialog.lastModified = "";
         objAddDialog.errorText = "";
+
+        objAddDialog.index = -1;
+
+        /*flags*/
+        objFilePath.readOnly = false;
+        objBrowseButton.enabled = true;
     }
 
 
@@ -300,7 +312,48 @@ Dialog {
         else{
             if(objAddDialog.isUpdate)
             {
+                objFilePath.readOnly = true;
+                objBrowseButton.enabled = false;
+                if(index !=-1){
+                    var dtags = [];
+                    if(QbUtil.stringContains(objAddDialog.tags,","))
+                    {
+                        dtags = QbUtil.stringTokenList(objAddDialog.tags,",");
+                    }
+                    else if(QbUtil.stringContains(objAddDialog.tags,";"))
+                    {
+                        dtags = QbUtil.stringTokenList(objAddDialog.tags,";");
+                    }
+                    else{
+                        dtags = QbUtil.stringTokenList(objAddDialog.tags," ");
+                    }
 
+                    var d = {};
+                    d["name"] = objAddDialog.name;
+                    d["author"] = objAddDialog.author;
+                    d["group"] = objAddDialog.group;
+                    d["tags"] = dtags;
+                    //d["lastModified"] = objAddDialog.lastModifiedTimeStamp;
+                    //d["path"] = objAddDialog.filePath;
+                    //d["status"] = 0;
+                    //d["hasData"] = 0;
+                    //d["hash"] = "";
+
+                    if(objORMQueryModel.update(objAddDialog.index,d))
+                    {
+                        objAddDialog.clearFields();
+                        objAddDialog.close();
+                    }
+                    else
+                    {
+                        objAddDialog.errorText = "Failed to update";
+                    }
+
+                }
+                else
+                {
+                    objAddDialog.errorText = "Please give an index"
+                }
             }
             else
             {
