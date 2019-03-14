@@ -9,13 +9,21 @@ import Qb.Core 1.0
 ToolBar {
     id: objTopToolBar
     width: parent.width
-    height: objMainAppUi.showTopBar?QbCoreOne.scale(75):QbCoreOne.scale(50)
+    height: objMainAppUi.showTopBar?QbCoreOne.scale(80):QbCoreOne.scale(50)
     Material.background: objMetaTheme.primary
 
     signal showLeftSidebar();
     signal showSettings();
     signal refresh();
     signal searchTerm(string searchTag);
+
+    Rectangle{
+        id: objStatusBar
+        width: parent.width
+        height: objMainAppUi.showTopBar?QbCoreOne.scale(30):0
+        color: objMetaTheme.changeTransparency("black",150)
+        anchors.top: parent.top
+    }
 
     ToolButton{
         id: objMenu
@@ -38,7 +46,7 @@ ToolBar {
         width: Math.min(300,(parent.width-150)*0.80)
         color: "white"
         radius: 5
-        y: (parent.height-height)/2.0
+        y: (QbCoreOne.scale(50)-height)/2.0
         x: (parent.width-width)/2.0
         property string placeHolderText: "Search"
 

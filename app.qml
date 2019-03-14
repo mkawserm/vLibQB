@@ -20,6 +20,14 @@ QbApp{
             {
                 Qt.inputMethod.hide();
             }
+            else
+            {
+                if(objMainStack.depth === 1)
+                {
+                    objExitDialog.open();
+                }
+            }
+
             event.accepted = true;
         }
     }
@@ -175,6 +183,52 @@ QbApp{
             }
         }
 
+        Dialog{
+            id: objExitDialog
+            width: Math.min(400,parent.width*0.90)
+            height: Math.min(300,parent.height*0.90)
+            x: (parent.width - width)/2.0
+            y: (parent.height - height)/2.0
+            modal: true
+            title: "Quit vLibQB?"
+            standardButtons: Dialog.Ok | Dialog.Cancel
+            Label{
+                id: objExitDialogLabel
+                anchors.fill: parent
+                horizontalAlignment: Label.AlignHCenter
+                verticalAlignment: Label.AlignVCenter
+                text: "Do you really want to quit?"
+                wrapMode: Label.WordWrap
+
+                Keys.onPressed: {
+                    event.accepted = true;
+                }
+
+                Keys.onReleased: {
+                    event.accepted = true
+                    if (event.key === Qt.Key_Escape || event.key === Qt.Key_Back)
+                    {
+                        objExitDialog.close();
+                    }
+                }
+
+            }
+
+            onOpened: {
+                objExitDialog.forceActiveFocus();
+            }
+
+            onClosed: {
+                objMainStack.currentItem.forceActiveFocus();
+            }
+
+            onAccepted: {
+                objMainAppUi.close();
+            }
+            onRejected: {
+            }
+        }
+
     }
 
 
@@ -195,7 +249,6 @@ QbApp{
         theme["background"] = "lightgrey";
         theme["foreground"] = "black";
         objMetaTheme.setThemeFromJsonData(JSON.stringify(theme));
-
 
         if(objMainAppUi.androidFullScreen)
         {
