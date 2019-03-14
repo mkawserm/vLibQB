@@ -48,6 +48,7 @@ ToolBar {
         radius: 5
         x: (parent.width-width)/2.0
         anchors.bottom: parent.bottom
+        anchors.bottomMargin: 5
         property string placeHolderText: "Search"
 
         Text{
