@@ -24,6 +24,11 @@ Drawer {
         id: objListView
         anchors.fill: parent
         model: objDataModel
+        header: Item{
+            width: objListView.width
+            height: 50
+        }
+        headerPositioning: ListView.OverlayHeader
 
         delegate: Item{
             width: objListView.width
