@@ -96,6 +96,7 @@ ToolBar {
             selectedTextColor: "black"
             color: "black"
             clip: true
+            inputMethodHints: Qt.ImhNoPredictiveText
             onFocusChanged: {
                 //console.log("TextInput Focus:",focus)
             }
