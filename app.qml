@@ -20,6 +20,15 @@ QbApp{
             {
                 Qt.inputMethod.hide();
                 objMainStack.currentItem.forceActiveFocus();
+
+                if(objMainAppUi.androidFullScreen)
+                {
+                    enableAndroidFullScreen();
+                }
+                else
+                {
+                    disableAndroidFullScreen();
+                }
             }
             else
             {
