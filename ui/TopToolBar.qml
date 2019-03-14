@@ -46,8 +46,8 @@ ToolBar {
         width: Math.min(300,(parent.width-150)*0.80)
         color: "white"
         radius: 5
-        y: (QbCoreOne.scale(50)-height)/2.0
         x: (parent.width-width)/2.0
+        anchors.bottom: parent.bottom
         property string placeHolderText: "Search"
 
         Text{
