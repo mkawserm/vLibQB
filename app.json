@@ -1,7 +1,7 @@
 {
     "name"			       : "vLibQB",
-    "version"		       : "1.0.2",
-    "build"                : 3,
+    "version"		       : "1.0.3",
+    "build"                : 4,
     "namespace"		       : "qb.apps.vLibQB",
 	
 	"supportedOs"          : ["osx","windows","linux","ios","android"],

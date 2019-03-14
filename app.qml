@@ -13,6 +13,15 @@ QbApp{
     minimumHeight: 500
     minimumWidth: 450
 
+    property int gridWidth: 100
+    property int gridHeight: 100
+    property int gridSpacing: 10
+    property string dataDir: ""
+
+    property bool androidFullScreen: false;
+    property bool showTopBar: false;
+    property bool showLoadingScreen: objMainStack.busy;
+
     Keys.onReleased: {
         if (event.key === Qt.Key_Escape || event.key === Qt.Key_Back)
         {
@@ -20,15 +29,7 @@ QbApp{
             {
                 Qt.inputMethod.hide();
                 objMainStack.currentItem.forceActiveFocus();
-
-                if(objMainAppUi.androidFullScreen)
-                {
-                    enableAndroidFullScreen();
-                }
-                else
-                {
-                    disableAndroidFullScreen();
-                }
+                objMainAppUi.resetAndroidFullScreenState();
             }
             else
             {
@@ -41,15 +42,6 @@ QbApp{
             event.accepted = true;
         }
     }
-
-    property int gridWidth: 100
-    property int gridHeight: 100
-    property int gridSpacing: 10
-    property string dataDir: ""
-
-    property bool androidFullScreen: false;
-    property bool showTopBar: false;
-    property bool showLoadingScreen: objMainStack.busy;
 
     QbSettings{
         id: objSettings
@@ -266,14 +258,7 @@ QbApp{
         theme["foreground"] = "black";
         objMetaTheme.setThemeFromJsonData(JSON.stringify(theme));
 
-        if(objMainAppUi.androidFullScreen)
-        {
-            enableAndroidFullScreen();
-        }
-        else
-        {
-            disableAndroidFullScreen();
-        }
+        objMainAppUi.resetAndroidFullScreenState();
 
         if(QbCoreOne.isCurrentDeviceWindows())
         {
@@ -312,14 +297,7 @@ QbApp{
     }
 
     onAppVisible: {
-        if(objMainAppUi.androidFullScreen)
-        {
-            enableAndroidFullScreen();
-        }
-        else
-        {
-            disableAndroidFullScreen();
-        }
+        objMainAppUi.resetAndroidFullScreenState();
     }
 
     onAppClosing: {
