@@ -21,6 +21,7 @@ Pane {
     property alias dataDir: objSettingsDialog.dataDir
 
     property bool showSettings: false;
+    property bool dragActive: false;
 
     property int currentPage: 1
     property alias totalPages: objORMQueryModel.totalPages
@@ -186,6 +187,7 @@ Pane {
                 border.color: objMetaTheme.primary
                 border.width: objGridView.currentIndex === index?1:0
                 Image{
+                    id: objImageGrid
                     width: objRootContentUi.gridWidth
                     height: objRootContentUi.gridHeight
                     fillMode: Image.PreserveAspectFit
@@ -196,13 +198,35 @@ Pane {
                     sourceSize.width: width*2
                     sourceSize.height: height*2
                     source: getFullFilePath(path)
+
+                    Drag.imageSource: getFullFilePath(path)
+                    Drag.active: objImageGridMouseArea.drag.active
+                    Drag.hotSpot.x: 0
+                    Drag.hotSpot.y: 0
+                    Drag.mimeData: {
+                        "text/uri-list":getFullFilePath(path)
+                    }
+                    //Drag.proposedAction: Qt.CopyAction
+                    Drag.dragType: Drag.Automatic
+                    Drag.supportedActions: Qt.CopyAction
+                    Drag.onDragFinished: {
+                        //console.log("Drag finished:");
+                        //console.log(JSON.stringify(dropAction));
+                        objRootContentUi.dragActive = false;
+                    }
+                    Drag.onDragStarted: {
+                        objRootContentUi.dragActive = true;
+                    }
                 }
 
                 MouseArea{
+                    id: objImageGridMouseArea
                     anchors.fill: parent
                     z: 3
                     preventStealing: true
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
+                    drag.target: objImageGrid
+
                     onPressed: {
                         objGridView.forceActiveFocus();
                         objGridView.currentIndex = index;
@@ -377,8 +401,9 @@ Pane {
     }
 
     DropArea{
-        visible: !objSettingsDialog.visible && !objAddDialog.visible
+        visible: !objSettingsDialog.visible && !objAddDialog.visible && !objRootContentUi.dragActive
         anchors.fill: parent
+
         onDropped: {
             if(drop["hasUrls"])
             {
@@ -391,6 +416,8 @@ Pane {
                         objAddDialog.isUpdate = false;
                         objAddDialog.filePath = url;
                         objAddDialog.open();
+                        //console.log("New SVG DROP:");
+                        //console.log(JSON.stringify(drop));
                     }
                     else
                     {
@@ -408,9 +435,6 @@ Pane {
             }
         }
     }
-
-
-
 
 
 
