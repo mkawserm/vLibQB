@@ -221,40 +221,19 @@ Pane {
             z: 1
             Keys.onReturnPressed: {
                 console.log("Return Pressed")
-                enterKeyAction(event);
+                objRootContentUi.enterKeyAction(event);
             }
             Keys.onEnterPressed: {
                 console.log("Enter Pressed")
-                enterKeyAction(event);
+                objRootContentUi.enterKeyAction(event);
             }
-
-
 
             Keys.onReleased:{
                 if(event.key === Qt.Key_Space){
                     event.accepted = true;
                     console.log("Space pressed")
-                    var path = objORMQueryModel.query.at(objGridView.currentIndex).path;
-                    objFullView.imagePath = Qt.platform.os==="windows"?"file:///"+objRootContentUi.dataDir+"/"+path:
-                                                                        "file://"+objRootContentUi.dataDir+"/"+path
-                    objFullView.open();
-                    objFullView.forceActiveFocus();
+                    objRootContentUi.showFullView();
                 }
-
-
-            }
-
-            function enterKeyAction(event){
-                console.log("Event:")
-                console.log(event)
-                editOriginaFlile();
-            }
-
-            function editOriginaFlile(){
-                var path = objORMQueryModel.query.at(objGridView.currentIndex).path;
-                objEditOriginalFile.filePath = Qt.platform.os==="windows"?"file:///"+objRootContentUi.dataDir+"/"+path:
-                                                                    "file://"+objRootContentUi.dataDir+"/"+path;
-                objEditOriginalFile.open();
             }
 
             delegate: Rectangle{
@@ -273,7 +252,7 @@ Pane {
                     anchors.centerIn: parent
                     sourceSize.width: width*2
                     sourceSize.height: height*2
-                    source: Qt.platform.os==="windows"?"file:///"+objRootContentUi.dataDir+"/"+path:"file://"+objRootContentUi.dataDir+"/"+path
+                    source: getFullFilePath(path)
                 }
 
                 MouseArea{
@@ -291,8 +270,7 @@ Pane {
                     onDoubleClicked: {
                         objGridView.forceActiveFocus();
                         objGridView.currentIndex = index;
-
-                        objGridView.editOriginaFlile();
+                        objRootContentUi.editOriginaFile();
                     }
                 }
             }
@@ -398,5 +376,34 @@ Pane {
                 drop.accepted = false;
             }
         }
+    }
+
+
+
+
+
+
+    function editOriginaFile(){
+        var path = objORMQueryModel.query.at(objGridView.currentIndex).path;
+        objEditOriginalFile.filePath = getFullFilePath(path);
+        objEditOriginalFile.open();
+    }
+
+    function enterKeyAction(event){
+        console.log("Event:")
+        console.log(event)
+        objRootContentUi.editOriginaFile();
+    }
+
+    function showFullView(){
+        var path = objORMQueryModel.query.at(objGridView.currentIndex).path;
+        objFullView.imagePath = getFullFilePath(path);
+        objFullView.open();
+        objFullView.forceActiveFocus();
+    }
+
+    function getFullFilePath(path){
+        return Qt.platform.os==="windows"?"file:///"+objRootContentUi.dataDir+"/"+path:
+                                           "file://"+objRootContentUi.dataDir+"/"+path;
     }
 }
