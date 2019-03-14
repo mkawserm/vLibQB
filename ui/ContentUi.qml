@@ -25,6 +25,13 @@ Pane {
     property int currentPage: 1
     property alias totalPages: objORMQueryModel.totalPages
 
+    onActiveFocusChanged: {
+        if(objRootContentUi.activeFocus)
+        {
+            objGridView.forceActiveFocus();
+        }
+    }
+
     onGridWidthChanged: {
         objMainAppUi.gridWidth = objRootContentUi.gridWidth;
     }
@@ -153,7 +160,7 @@ Pane {
             visible: objORMQueryModel.count !== 0
             cellWidth: objRootContentUi.gridWidth + objRootContentUi.gridSpacing
             cellHeight: objRootContentUi.gridHeight + objRootContentUi.gridSpacing
-            ScrollIndicator.vertical: ScrollIndicator { }
+            ScrollBar.vertical: ScrollBar{}
             z: 1
             Keys.onReturnPressed: {
                 console.log("Return Pressed")

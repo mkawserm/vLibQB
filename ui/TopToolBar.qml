@@ -9,7 +9,7 @@ import Qb.Core 1.0
 ToolBar {
     id: objTopToolBar
     width: parent.width
-    height: objMainAppUi.showTopBar?QbCoreOne.scale(77):QbCoreOne.scale(50)
+    height: objMainAppUi.showTopBar?QbCoreOne.scale(76):QbCoreOne.scale(50)
     Material.background: objMetaTheme.primary
 
     signal showLeftSidebar();
@@ -20,7 +20,7 @@ ToolBar {
     Rectangle{
         id: objStatusBar
         width: parent.width
-        height: objMainAppUi.showTopBar?QbCoreOne.scale(27):0
+        height: objMainAppUi.showTopBar?QbCoreOne.scale(26):0
         color: objMetaTheme.changeTransparency("black",150)
         anchors.top: parent.top
     }
