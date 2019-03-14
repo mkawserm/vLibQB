@@ -86,6 +86,7 @@ ToolBar {
             selectionColor: "lightblue"
             selectedTextColor: "black"
             color: "black"
+            clip: true
             onFocusChanged: {
                 //console.log("TextInput Focus:",focus)
             }
