@@ -1,5 +1,5 @@
 # vLibQB
-Manage vetor graphics
+Manage vector graphics
 
 
 # How to use vLibQB
