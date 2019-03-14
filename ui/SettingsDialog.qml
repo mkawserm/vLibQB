@@ -4,6 +4,8 @@ import QtQuick 2.12
 import QtQuick.Controls 2.5
 import QtQuick.Controls.Material 2.12
 
+import "./desktop" as DesktopUi
+
 Popup {
     id: objSettingsDialog
     modal: true
@@ -22,6 +24,11 @@ Popup {
     Loader{
         id: objFolderChooserLoader
     }
+
+    DesktopUi.DesktopFolderChooser{
+        id: objDesktopFolderChooser
+    }
+
 
     QbPaths{
         id: objPaths
@@ -203,7 +210,8 @@ Popup {
                 text: "BROWSE"
                 Material.background: objMetaTheme.primary
                 onClicked: {
-                    objFolderChooserLoader.source = objMainAppUi.absoluteURL("/ui/desktop/DesktopFolderChooser.qml");
+                    objDesktopFolderChooser.folderDialog.open();
+                    //objFolderChooserLoader.source = objMainAppUi.absoluteURL("/ui/desktop/DesktopFolderChooser.qml");
                 }
             }
         }
