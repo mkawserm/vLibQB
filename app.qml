@@ -219,7 +219,7 @@ QbApp{
             }
 
             onClosed: {
-                objMainStack.currentItem.forceActiveFocus();
+                //objMainStack.currentItem.forceActiveFocus();
             }
 
             onAccepted: {
