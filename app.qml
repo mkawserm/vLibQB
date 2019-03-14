@@ -220,6 +220,10 @@ QbApp{
 
             onClosed: {
                 objMainStack.currentItem.forceActiveFocus();
+                if(Qt.inputMethod.visible)
+                {
+                    Qt.inputMethod.hide();
+                }
             }
 
             onAccepted: {
