@@ -228,6 +228,22 @@ Pane {
                 enterKeyAction(event);
             }
 
+
+
+            Keys.onReleased:{
+                if(event.key === Qt.Key_Space){
+                    event.accepted = true;
+                    console.log("Space pressed")
+                    var path = objORMQueryModel.query.at(objGridView.currentIndex).path;
+                    objFullView.imagePath = Qt.platform.os==="windows"?"file:///"+objRootContentUi.dataDir+"/"+path:
+                                                                        "file://"+objRootContentUi.dataDir+"/"+path
+                    objFullView.open();
+                    objFullView.forceActiveFocus();
+                }
+
+
+            }
+
             function enterKeyAction(event){
                 console.log("Event:")
                 console.log(event)
@@ -294,6 +310,17 @@ Pane {
         y: (parent.height - height)/2.0
         onUpdateTagList: {
             objRootContentUi.updateTagList(TagList);
+        }
+    }
+
+    FullGraphicsView{
+        id: objFullView
+        width: parent.width
+        height: parent.height
+        x: 0
+        y: 0
+        onClosed: {
+            objGridView.forceActiveFocus();
         }
     }
 
