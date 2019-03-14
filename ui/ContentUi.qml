@@ -22,6 +22,9 @@ Pane {
 
     property bool showSettings: false;
 
+    property int currentPage: 1
+    property alias totalPages: objORMQueryModel.totalPages
+
     onGridWidthChanged: {
         objMainAppUi.gridWidth = objRootContentUi.gridWidth;
     }
@@ -48,68 +51,6 @@ Pane {
         {
             objSettingsDialog.close();
         }
-    }
-
-
-    function setupDb(){
-        if(objRootContentUi.dataDir !== "")
-        {
-            objDir.setPath(objRootContentUi.dataDir);
-            if(!objDir.exists())
-            {
-                objDir.mkpath(objRootContentUi.dataDir);
-            }
-
-            objVLibQBCore.dbPath = objRootContentUi.dataDir+"/vLibQB.db";
-            if(objVLibQBCore.orm.createTables())
-            {
-
-            }
-            else
-            {
-                console.log("Failed to create tables")
-            }
-            objORMQueryModel.search("status",0,"-pk");
-        }
-    }
-
-    function updateTagList(TagList)
-    {
-        objLeftSidebar.dataModel.clear();
-        objLeftSidebar.dataModel.append({"name":"All"});
-        for(var i=0;i<TagList.length;++i)
-        {
-            objLeftSidebar.dataModel.append({"name": QbUtil.stringToCapitalize(TagList[i])});
-        }
-    }
-
-    function updateTagListFromModel()
-    {
-        objLeftSidebar.dataModel.clear();
-        objLeftSidebar.dataModel.append({"name":"All"});
-
-        objVLibQBCore.orm.vLibQBKeyValuePairQuery.reset();
-        objVLibQBCore.orm.vLibQBKeyValuePairQuery.one("pk","TagList");
-        if(objVLibQBCore.orm.vLibQBKeyValuePairQuery.size() === 0)
-        {
-
-        }
-        else
-        {
-            try
-            {
-                var TagList = JSON.parse(objVLibQBCore.orm.vLibQBKeyValuePairQuery.at(0).value);
-                for(var i=0;i<TagList.length;++i)
-                {
-                    objLeftSidebar.dataModel.append({"name": QbUtil.stringToCapitalize(TagList[i])});
-                }
-            }
-            catch(e)
-            {
-
-            }
-        }
-
     }
 
     Component.onCompleted: {
@@ -143,14 +84,7 @@ Pane {
         id: objLeftSidebar
         onSelectedTag:{
             console.log(tag);
-            if(tag === "All")
-            {
-                objORMQueryModel.search("status",0,"-pk");
-            }
-            else
-            {
-                objORMQueryModel.search("tags",tag,"-pk");
-            }
+            objRootContentUi.tagSelected(tag);
         }
         onClosed:
         {
@@ -182,10 +116,12 @@ Pane {
             console.log(searchTag);
             if(searchTag === "")
             {
+                objRootContentUi.currentPage = 1;
                 objORMQueryModel.search("status",0,"-pk");
             }
             else
             {
+                objRootContentUi.currentPage = 1;
                 objORMQueryModel.search(["name","path","author","tags","group"],searchTag,"-pk");
             }
         }
@@ -259,6 +195,7 @@ Pane {
                     anchors.fill: parent
                     z: 3
                     preventStealing: true
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
                     onPressed: {
                         objGridView.forceActiveFocus();
                         objGridView.currentIndex = index;
@@ -266,11 +203,39 @@ Pane {
                     onClicked: {
                         objGridView.forceActiveFocus();
                         objGridView.currentIndex = index;
+                        if (mouse.button === Qt.RightButton)
+                            objContextMenu.popup()
                     }
+
                     onDoubleClicked: {
                         objGridView.forceActiveFocus();
                         objGridView.currentIndex = index;
                         objRootContentUi.editOriginaFile();
+                    }
+
+                    onPressAndHold: {
+                        objGridView.forceActiveFocus();
+                        objGridView.currentIndex = index;
+                        if (mouse.source === Qt.MouseEventNotSynthesized)
+                            objContextMenu.popup()
+                    }
+
+                    Menu {
+                        id: objContextMenu
+
+                        MenuItem {
+                            text: "Edit"
+                            onTriggered: {
+                                objAddDialog.showUpdate(index, objVLibQBCore.orm.vLibQBModelQuery.at(index))
+                            }
+                        }
+
+                        MenuItem {
+                            text: "Delete"
+                            onTriggered: {
+                                objDeleteOriginalFile.open();
+                            }
+                        }
                     }
                 }
             }
@@ -291,6 +256,7 @@ Pane {
         y: (parent.height - height)/2.0
         onClosed: {
             objRootContentUi.showSettings = false;
+            objGridView.forceActiveFocus();
         }
     }
 
@@ -302,6 +268,9 @@ Pane {
         y: (parent.height - height)/2.0
         onUpdateTagList: {
             objRootContentUi.updateTagList(TagList);
+        }
+        onAdded: {
+            objRootContentUi.refresh();
         }
     }
 
@@ -335,6 +304,32 @@ Pane {
         }
     }
 
+    Dialog{
+        id: objDeleteOriginalFile
+        width: Math.min(400,parent.width*0.90)
+        height: Math.min(300,parent.height*0.90)
+        x: (parent.width - width)/2.0
+        y: (parent.height - height)/2.0
+        onClosed: {
+            objGridView.forceActiveFocus();
+        }
+        title: "Delete original file?"
+        standardButtons: Dialog.Ok | Dialog.Cancel
+        Label{
+            anchors.fill: parent
+            horizontalAlignment: Label.AlignHCenter
+            verticalAlignment: Label.AlignVCenter
+            text: "Do you really want to delete the original file?"
+            wrapMode: Label.WordWrap
+        }
+        onAccepted: {
+            removeCurrentFile();
+        }
+        onRejected: {
+        }
+    }
+
+
     FullGraphicsView{
         id: objFullView
         width: parent.width
@@ -358,6 +353,7 @@ Pane {
                     if(QbUtil.stringIEndsWith(url,".svg"))
                     {
                         drop.accepted = true;
+                        objAddDialog.isUpdate = false;
                         objAddDialog.filePath = url;
                         objAddDialog.open();
                     }
@@ -402,8 +398,106 @@ Pane {
         objFullView.forceActiveFocus();
     }
 
+    function removeCurrentFile(){
+        var path = objRootContentUi.dataDir+"/"+objORMQueryModel.query.at(objGridView.currentIndex).path;
+        if(objORMQueryModel.remove(objGridView.currentIndex))
+        {
+            objFileHandler.setFileName(path);
+            if(objFileHandler.remove())
+            {
+
+            }
+        }
+        refresh();
+    }
+
+    function refresh(){
+        objRootContentUi.currentPage = 1;
+        objORMQueryModel.search("status",0,"-pk");
+    }
+
     function getFullFilePath(path){
         return Qt.platform.os==="windows"?"file:///"+objRootContentUi.dataDir+"/"+path:
                                            "file://"+objRootContentUi.dataDir+"/"+path;
     }
+
+
+    function setupDb(){
+        if(objRootContentUi.dataDir !== "")
+        {
+            objDir.setPath(objRootContentUi.dataDir);
+            if(!objDir.exists())
+            {
+                objDir.mkpath(objRootContentUi.dataDir);
+            }
+
+            objVLibQBCore.dbPath = objRootContentUi.dataDir+"/vLibQB.db";
+            if(objVLibQBCore.orm.createTables())
+            {
+
+            }
+            else
+            {
+                console.log("Failed to create tables")
+            }
+            objRootContentUi.currentPage = 1;
+            objORMQueryModel.search("status",0,"-pk");
+        }
+    }
+
+    function updateTagList(TagList)
+    {
+        objLeftSidebar.dataModel.clear();
+        objLeftSidebar.dataModel.append({"name":"All"});
+        for(var i=0;i<TagList.length;++i)
+        {
+            objLeftSidebar.dataModel.append({"name": QbUtil.stringToCapitalize(TagList[i])});
+        }
+    }
+
+    function updateTagListFromModel()
+    {
+        objLeftSidebar.dataModel.clear();
+        objLeftSidebar.dataModel.append({"name":"All"});
+
+        objVLibQBCore.orm.vLibQBKeyValuePairQuery.reset();
+        objVLibQBCore.orm.vLibQBKeyValuePairQuery.one("pk","TagList");
+        if(objVLibQBCore.orm.vLibQBKeyValuePairQuery.size() === 0)
+        {
+
+        }
+        else
+        {
+            try
+            {
+                var TagList = JSON.parse(objVLibQBCore.orm.vLibQBKeyValuePairQuery.at(0).value);
+                for(var i=0;i<TagList.length;++i)
+                {
+                    objLeftSidebar.dataModel.append({"name": QbUtil.stringToCapitalize(TagList[i])});
+                }
+            }
+            catch(e)
+            {
+
+            }
+        }
+
+    }
+
+
+    function tagSelected(tag){
+        if(tag === "All")
+        {
+            objRootContentUi.currentPage = 1;
+            objORMQueryModel.search("status",0,"-pk");
+
+        }
+        else
+        {
+            objRootContentUi.currentPage = 1;
+            objORMQueryModel.search("tags",tag,"-pk");
+        }
+    }
+
+
 }

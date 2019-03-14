@@ -9,6 +9,11 @@ Dialog {
     id: objAddDialog
     modal: true
     closePolicy: Popup.NoAutoClose
+    topPadding: 0
+    bottomPadding: 0
+    leftPadding: 0
+    rightPadding: 0
+
 
     property alias errorText: objMessageBox.text
 
@@ -24,6 +29,7 @@ Dialog {
     property alias lastModified: objLastModified.text
 
     signal updateTagList(var TagList);
+    signal added();
 
     onFilePathChanged: {
         if(filePath !== ""){
@@ -32,15 +38,11 @@ Dialog {
                 lastModified =  QbORMUtil.getDateTimeStringFromUnixTimestamp(lastModifiedTimeStamp);
             }
             else{
+                lastModifiedTimeStamp = QbORMUtil.getLastModifiedTimestampVariant(objRootContentUi.dataDir+"/"+filePath);
                 lastModified =  QbORMUtil.getDateTimeStringFromUnixTimestamp(lastModifiedTimeStamp);
             }
         }
     }
-
-    topPadding: 0
-    bottomPadding: 0
-    leftPadding: 0
-    rightPadding: 0
 
     onClosed: {
         clearFields();
@@ -292,7 +294,21 @@ Dialog {
     }
 
     function showUpdate(index,dataMap){
+        objAddDialog.index = index;
+        objAddDialog.name = dataMap.name;
+        objAddDialog.group = dataMap.group;
+        objAddDialog.author = dataMap.author;
+        objAddDialog.filePath = dataMap.path;
+        //objAddDialog.lastModifiedTimeStamp = String(dataMap.lastModified);
+        objAddDialog.tags = QbUtil.stringJoin(dataMap.tags,",");
+        objAddDialog.isUpdate = true;
+        objAddDialog.lastModifiedTimeStamp = QbORMUtil.getLastModifiedTimestampVariant(objRootContentUi.dataDir+"/"+dataMap.path);
+        objAddDialog.lastModified =  QbORMUtil.getDateTimeStringFromUnixTimestamp(lastModifiedTimeStamp);
 
+        objFilePath.readOnly = true;
+        //objBrowseButton.enabled = false;
+
+        objAddDialog.open();
     }
 
 
@@ -499,7 +515,7 @@ Dialog {
                         {
                         }
                     }
-
+                    objAddDialog.added();
                     objAddDialog.updateTagList(TagList);
                     objAddDialog.clearFields();
                     objAddDialog.close();
