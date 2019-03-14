@@ -247,6 +247,14 @@ Pane {
             function enterKeyAction(event){
                 console.log("Event:")
                 console.log(event)
+                editOriginaFlile();
+            }
+
+            function editOriginaFlile(){
+                var path = objORMQueryModel.query.at(objGridView.currentIndex).path;
+                objEditOriginalFile.filePath = Qt.platform.os==="windows"?"file:///"+objRootContentUi.dataDir+"/"+path:
+                                                                    "file://"+objRootContentUi.dataDir+"/"+path;
+                objEditOriginalFile.open();
             }
 
             delegate: Rectangle{
@@ -280,6 +288,12 @@ Pane {
                         objGridView.forceActiveFocus();
                         objGridView.currentIndex = index;
                     }
+                    onDoubleClicked: {
+                        objGridView.forceActiveFocus();
+                        objGridView.currentIndex = index;
+
+                        objGridView.editOriginaFlile();
+                    }
                 }
             }
         }
@@ -310,6 +324,36 @@ Pane {
         y: (parent.height - height)/2.0
         onUpdateTagList: {
             objRootContentUi.updateTagList(TagList);
+        }
+    }
+
+    Dialog{
+        id: objEditOriginalFile
+        width: Math.min(400,parent.width*0.90)
+        height: Math.min(300,parent.height*0.90)
+        x: (parent.width - width)/2.0
+        y: (parent.height - height)/2.0
+        onClosed: {
+            objGridView.forceActiveFocus();
+        }
+        title: "Edit original file?"
+        standardButtons: Dialog.Ok | Dialog.Cancel
+
+        property string filePath: ""
+        Label{
+            anchors.fill: parent
+            horizontalAlignment: Label.AlignHCenter
+            verticalAlignment: Label.AlignVCenter
+            text: "Do you really want to edit the original file?"
+            wrapMode: Label.WordWrap
+        }
+        onAccepted: {
+            if(filePath !== ""){
+                Qt.openUrlExternally(filePath);
+            }
+        }
+        onRejected: {
+            filePath = "";
         }
     }
 
