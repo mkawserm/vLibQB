@@ -19,6 +19,7 @@ QbApp{
             if(Qt.inputMethod.visible)
             {
                 Qt.inputMethod.hide();
+                objMainStack.currentItem.forceActiveFocus();
             }
             else
             {
