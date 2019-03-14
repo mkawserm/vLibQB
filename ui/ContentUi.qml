@@ -280,6 +280,7 @@ Pane {
         height: Math.min(300,parent.height*0.90)
         x: (parent.width - width)/2.0
         y: (parent.height - height)/2.0
+        modal: true
         onClosed: {
             objGridView.forceActiveFocus();
         }
@@ -288,11 +289,19 @@ Pane {
 
         property string filePath: ""
         Label{
+            id: objEditOriginalFileText
             anchors.fill: parent
             horizontalAlignment: Label.AlignHCenter
             verticalAlignment: Label.AlignVCenter
             text: "Do you really want to edit the original file?"
             wrapMode: Label.WordWrap
+            Keys.onPressed: {
+                event.accepted = true;
+            }
+
+            Keys.onReleased: {
+                event.accepted = true
+            }
         }
         onAccepted: {
             if(filePath !== ""){
@@ -302,6 +311,9 @@ Pane {
         onRejected: {
             filePath = "";
         }
+        onOpened: {
+            objEditOriginalFileText.forceActiveFocus();
+        }
     }
 
     Dialog{
@@ -310,18 +322,34 @@ Pane {
         height: Math.min(300,parent.height*0.90)
         x: (parent.width - width)/2.0
         y: (parent.height - height)/2.0
+        modal: true
         onClosed: {
             objGridView.forceActiveFocus();
         }
         title: "Delete original file?"
         standardButtons: Dialog.Ok | Dialog.Cancel
         Label{
+            id: objDeleteOriginalFileText
             anchors.fill: parent
             horizontalAlignment: Label.AlignHCenter
             verticalAlignment: Label.AlignVCenter
             text: "Do you really want to delete the original file?"
             wrapMode: Label.WordWrap
+
+            Keys.onPressed: {
+                event.accepted = true;
+            }
+
+            Keys.onReleased: {
+                event.accepted = true
+            }
+
         }
+
+        onOpened: {
+            objDeleteOriginalFileText.forceActiveFocus();
+        }
+
         onAccepted: {
             removeCurrentFile();
         }

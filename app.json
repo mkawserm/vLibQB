@@ -12,7 +12,7 @@
     "genre"   		       : "Tools",
 	
     "minQbVersion"         : "1.0.0",
-    "minQbBuildNumber"     : 2150,
+    "minQbBuildNumber"     : 2165,
     "appVariant"           : "APP",
     "packageVariant"       : "QAP",
 

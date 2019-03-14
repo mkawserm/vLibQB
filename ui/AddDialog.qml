@@ -524,7 +524,6 @@ Dialog {
                 {
                     objAddDialog.errorText = "Failed to add";
                 }
-
             }
         }
 
