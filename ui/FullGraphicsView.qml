@@ -37,7 +37,7 @@ Popup {
             source: objFullView.imagePath
             fillMode: Image.PreserveAspectFit
             sourceSize.width: width*4.0
-            sourceSize.height:  height*4.0
+            sourceSize.height: height*4.0
             mipmap: true
             smooth: true
             asynchronous: true
