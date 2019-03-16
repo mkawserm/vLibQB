@@ -304,4 +304,14 @@ QbApp{
         QbUtil.cleanAppObject(objMainAppUi.appId);
         console.log("vLibQB app closing.");
     }
+
+    /*JS Methods*/
+    function pushPage(qmlPath){
+        objMainStack.push(qmlPath,{"appId":objMainAppUi.appId});
+    }
+
+    function popPage(){
+        objMainStack.pop();
+    }
+    /*End JS Methods*/
 }

@@ -21,4 +21,7 @@ Project {
     Files{
         paths:"./.gitignore"
     }
+    Files{
+        paths:"./pycode/converter.py"
+    }
 }
