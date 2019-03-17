@@ -1,7 +1,7 @@
-import QtQuick 2.12
-import QtQuick.Window 2.12
-import QtQuick.Controls 2.5
-import QtQuick.Controls.Material 2.12
+import QtQuick 2.10
+import QtQuick.Window 2.10
+import QtQuick.Controls 2.4
+import QtQuick.Controls.Material 2.10
 
 import Qb 1.0
 import Qb.Core 1.0
@@ -35,7 +35,18 @@ QbApp{
             {
                 if(objMainStack.depth === 1)
                 {
-                    objExitDialog.open();
+                    if(objExitDialog.visible)
+                    {
+                        objExitDialog.close();
+                    }
+                    else
+                    {
+                        objExitDialog.open();
+                    }
+                }
+                else
+                {
+                    objMainStack.pop();
                 }
             }
 
@@ -308,6 +319,11 @@ QbApp{
     /*JS Methods*/
     function pushPage(qmlPath){
         objMainStack.push(qmlPath,{"appId":objMainAppUi.appId});
+    }
+
+    function pushPageWithData(qmlPath,data){
+        data["appId"] = objMainAppUi.appId;
+        objMainStack.push(qmlPath,data);
     }
 
     function popPage(){

@@ -1,9 +1,9 @@
 import Qb 1.0
 import Qb.ORM 1.0
 import Qb.Core 1.0
-import QtQuick 2.12
-import QtQuick.Controls 2.5
-import QtQuick.Controls.Material 2.12
+import QtQuick 2.10
+import QtQuick.Controls 2.4
+import QtQuick.Controls.Material 2.10
 
 Dialog {
     id: objAddDialog
