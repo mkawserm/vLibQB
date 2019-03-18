@@ -1,4 +1,5 @@
 import Qb 1.0
+import Qb.Core 1.0
 
 import QtQuick 2.10
 import QtQuick.Controls 2.4
@@ -8,6 +9,24 @@ Item {
     id: objRootPyConverter
     property string appId: "";
     property string path;
+
+    property string buildDir;
+    property int outputWidth:100;
+    property int outputHeight:100;
+
+
+    QbSettings{
+        id: objPySettings
+        name: "PyConverter";
+        property alias buildDir: objRootPyConverter.buildDir;
+        property alias outputWidth: objRootPyConverter.outputWidth;
+        property alias outputHeight: objRootPyConverter.outputHeight;
+    }
+
+    Component.onCompleted: {
+        objPySettings.setAppId(objRootPyConverter.appId);
+    }
+
 
     Column{
         id: topBar
@@ -41,7 +60,6 @@ Item {
     }
 
 
-
     ToolBar {
         width: parent.width
         height: 50
@@ -57,7 +75,6 @@ Item {
             anchors.left: parent.left
             anchors.leftMargin: 5
             width: 30
-            //Material.background: objMetaTheme.primary
             Material.foreground: objMetaTheme.textColor(objMetaTheme.primary)
             onClicked: {
                 objMainAppUi.popPage();
