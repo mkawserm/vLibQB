@@ -63,5 +63,17 @@ Item {
                 objMainAppUi.popPage();
             }
         }
+
+        Button{
+            id: objStartButton
+            text: "START"
+            anchors.right: parent.right
+            anchors.rightMargin: 5
+            Material.background: objMetaTheme.secondary
+            Material.foreground: objMetaTheme.textColor(objMetaTheme.secondary)
+            onClicked: {
+
+            }
+        }
     }
 }
