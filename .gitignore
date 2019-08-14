@@ -70,3 +70,6 @@ Thumbs.db
 # --------
 *.dll
 *.exe
+*.20
+*.8-pre1
+*.9-pre1
